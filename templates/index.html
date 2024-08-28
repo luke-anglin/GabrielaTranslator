@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Translator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 400px;
+      }
+      h1 {
+        font-size: 24px;
+        color: #333;
+        text-align: center;
+      }
+      textarea {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+      }
+      input[type="submit"] {
+        width: 100%;
+        background-color: #4caf50;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+      .translated-text {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #e7f3e7;
+        border: 1px solid #c8e6c9;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gabriela Translator</h1>
+      <form action="/translate" method="POST">
+        <textarea name="text" rows="5" placeholder="Enter text to translate...">
+{{ original_text }}</textarea
+        ><br />
+        <input type="submit" value="Translate" />
+      </form>
+      {% if translated_text %}
+      <div class="translated-text">
+        <h2>Translated Text:</h2>
+        <p>{{ translated_text }}</p>
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
