@@ -105,9 +105,12 @@
         >Request some kind of image, and we'll put a romantic, Christmas-themed
         spin on it 😉</i
       >
-      <br>
-      <br>
-      <i>Note, this may take a second! Image generation is slow! Be patient, Gabs!</i>
+      <br />
+      <br />
+      <i
+        >Note, this may take a second! Image generation is slow! Be patient,
+        Gabs!</i
+      >
       <form action="/generate-image" method="post">
         <input
           type="text"
@@ -140,18 +143,13 @@
         </li>
         <li>
           <strong>Grinches:</strong> Avoid them! If a Grinch kidnaps your baby,
-          you lose a spare kid.
+          you lose that kid for good. Luckily, you've got a few spares. But be careful! Wouldn't wanna waste 'em!
         </li>
         <li>
-          <strong>Crates:</strong> Crates block your path, so aim carefully!
+          <strong>The void:</strong> The floor of this screen is a void. Don't let your baby fall there! You'll have to use a spare kid to replace the one ya lost!
         </li>
         <li>
-          <strong>Mom:</strong> The mom protects the baby from Grinches when
-          stationary.
-        </li>
-        <li>
-          <strong>Kid Toll:</strong> Lose all spare kids, and you'll need to beg
-          Luke for more!
+          <strong>Mom:</strong> You're the mom! Throw your kid carefully, lest you lose 'em!
         </li>
       </ul>
       <p>Good luck, Mama! 🎅👶✨</p>
@@ -172,8 +170,95 @@
     </section>
 
     <section>
+      <h2>💬 Banter with Luke</h2>
+      <p>Have a fun conversation with Luke! Say something, and Luke will respond cleverly!</p>
+      <div
+        id="chat-container"
+        style="
+          max-height: 400px;
+          overflow-y: auto;
+          border: 1px solid #ddd;
+          padding: 1rem;
+          background: #f9f9f9;
+          border-radius: 8px;
+        "
+      >
+        <!-- Chat messages will be displayed here -->
+        <div id="chat-messages" style="display: flex; flex-direction: column;"></div>
+      </div>
+      <form id="chat-form" action="/get_banter_response" method="post" style="margin-top: 1rem;">
+        <label for="user-message">Gabs:</label>
+        <input
+          type="text"
+          id="user-message"
+          name="user_message"
+          placeholder="Type your message to Luke here..."
+          style="width: calc(100% - 120px); margin-right: 8px;"
+          required
+        />
+        <button type="submit" style="width: 100px;">Send</button>
+      </form>
+    </section>
+    
+    <script>
+      const chatForm = document.getElementById("chat-form");
+      const chatMessages = document.getElementById("chat-messages");
+      const conversationContext = []; // Array to maintain full conversation context
+    
+      // Function to append messages dynamically
+      function appendMessage(sender, message, align = "left", bgColor = "gray") {
+        const messageDiv = document.createElement("div");
+        messageDiv.style.margin = "10px 0";
+        messageDiv.style.textAlign = align;
+        messageDiv.style.backgroundColor = bgColor;
+        messageDiv.style.color = "white";
+        messageDiv.style.padding = "10px";
+        messageDiv.style.borderRadius = "8px";
+        messageDiv.style.maxWidth = "70%";
+        messageDiv.style.alignSelf = align === "right" ? "flex-end" : "flex-start";
+        messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    
+      chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+    
+        const userMessage = document.getElementById("user-message").value;
+    
+        // Append user's message (Gabs) to the chat
+        appendMessage("Gabs", userMessage, "right", "blue");
+    
+        // Add Gabs' message to the conversation context
+        conversationContext.push(`Gabs: ${userMessage}`);
+    
+        // Clear the input field
+        document.getElementById("user-message").value = "";
+    
+        // Send the full conversation context and user's message to the server
+        const response = await fetch("/get_banter_response", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            conversation: conversationContext, // Full conversation
+            user_message: userMessage, // Last user message
+          }),
+        });
+    
+        const data = await response.json();
+    
+        // Append Luke's response to the chat
+        appendMessage("Luke", data.response, "left", "gray");
+    
+        // Add Luke's response to the conversation context
+        conversationContext.push(`Luke: ${data.response}`);
+      });
+    </script>
+    
+
+    <section>
       <!-- Legacy Chatbot -->
-      <h2>✨ Legacy Version - Gabriela's Chatbot ✨</h2>
+      <h2>✨ Legacy Version - Gabriela Translator ✨</h2>
       <form action="/translate" method="post">
         <label for="text">Enter text for Gabriela:</label>
         <textarea

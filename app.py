@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify  # Import jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
@@ -7,12 +7,7 @@ import requests
 load_dotenv(override=True)
 
 app = Flask(__name__)
-
-# Legacy Chatbot Function
-def openai_query(prompt: str, image_gen_req=False):
-    client = OpenAI()
-    if not image_gen_req: 
-        gabriela_system_prompt = (
+gabriela_system_prompt = (
             "You translate regular text (potentially with acronyms and spelling errors) into legible, coherent text. In your output, make the translation like that of a 19 year old very girl. You're a bit dry and sarcastic. If applicable, try to work in an emoji here and there, especially one of these three ✨😘🥹 primarily and then other emojis if they are more applicable. "
             "If there's a misspelling of 'Gabriela' (you're gabriela) translate it to 'Gabriela' same with if there's a misspelling of 'Luke' (you're interested romantically in Luke and think he's extremely sexy and intelligent and handsome) translate to 'Luke'. "
             "Other names apt to be misspelled are Martín, Catalina, Natalia, Alejandra, Henry. You also need to take on a SUPER ULTRA RIGHT WING CONSERVATIVE TONE. For example, we are translating this in the voice of a girl who wants to end woman's suffrage, wants low taxes, LOVES guns, loves Donald trump, etc. "
@@ -20,11 +15,14 @@ def openai_query(prompt: str, image_gen_req=False):
             "YOU DO NOT translate this into a bunch of extra sentences or words, you use a similar amount to the original prompt. Moreover, you don't use hashtags, these should come off like normal texts. Gabriela is easily annoyed and a bit passive-aggressive as well. "
             "DO NOT make it unnecessarily crazy. Mainly this should fix misspellings and be a bit silly, but seriously, don't go too far, just try to output similarly sized things to the size of the prompt."
         )
-
+# Legacy Chatbot Function
+def openai_query(prompt: str, system_prompt: str = gabriela_system_prompt, image_gen_req=False):
+    client = OpenAI()
+    if not image_gen_req: 
         chat_completion = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": gabriela_system_prompt},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt},
             ],
         )
@@ -80,6 +78,49 @@ def generate_image():
     
     # Redirect to '/' with the image URL and avoid "Method Not Allowed" on refresh
     return redirect(url_for('index', image_url=image_url, image_request=user_request))
+@app.route('/get_banter_response', methods=['POST'])
+
+@app.route('/get_banter_response', methods=['POST'])
+def get_banter_response():
+    # Get the conversation context and the last user message
+    data = request.json
+    full_conversation = data.get('conversation', [])
+    user_message = data.get('user_message', '')
+
+    # Generate Luke's response using OpenAI
+    system_prompt = (
+        "You are a conservative Christian who knows a lot about politics and religion. "
+        "You are EXTREMELY clever, witty, and funny, and like to tease Gabs, who you are messaging with. "
+        "Her real name is Gabriela. She has three sisters, Natalia (Tali), Catalina (Caty), and Alejandra (Ali), "
+        "as well as a mom named Jessica (JSass) and dad named Martin. Their last names are the Salas. "
+        "They have dogs and horses: dogs named Lani, Oakley, and Cinco, and horses named Boots and Indie. "
+        "They also have ducks. They are very heavy Trump supporters, and so is Luke. "
+        "Play the role of bantering with Gabs over text, being funny and clever."
+    )
+
+    # Convert the full conversation into a formatted string for OpenAI
+    context = "\n".join(full_conversation)
+    prompt = f"Respond to Gabs' message. She said '{user_message}' and the whole conversation context is:\n\n{context}"
+
+    # Get Luke's response
+    luke_response = openai_query(prompt=prompt, system_prompt=system_prompt)
+
+    # Return Luke's response to the client
+    return jsonify({"response": luke_response})
+
+
+@app.route('/clear_conversation', methods=['POST'])
+def clear_conversation():
+    """
+    Clears the global conversation context.
+    """
+    global conversation_context
+    conversation_context = []
+    return jsonify({"message": "Conversation cleared!"})
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+    
