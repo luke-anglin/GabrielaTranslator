@@ -101,7 +101,13 @@
     </section>
     <section>
       <h2>🖼️ Generate a Christmas-Themed Romantic Image</h2>
-      <i>Request some kind of image, and we'll put a romantic, Christmas-themed spin on it 😉</i>
+      <i
+        >Request some kind of image, and we'll put a romantic, Christmas-themed
+        spin on it 😉</i
+      >
+      <br>
+      <br>
+      <i>Note, this may take a second! Image generation is slow! Be patient, Gabs!</i>
       <form action="/generate-image" method="post">
         <input
           type="text"
@@ -118,6 +124,51 @@
         <img src="{{ image_url }}" alt="Generated Christmas Image" />
       </div>
       {% endif %}
+    </section>
+
+    <section>
+      <h2>🎮 Shoot the Baby onto Santa's Lap</h2>
+      <p>
+        In this hilarious game, your goal is to shoot your baby onto Santa's lap
+        while avoiding Grinches and navigating around crates! Here's how to
+        play:
+      </p>
+      <ul>
+        <li>
+          <strong>Drag and aim:</strong> Click and drag the baby to aim. Release
+          to shoot!
+        </li>
+        <li>
+          <strong>Grinches:</strong> Avoid them! If a Grinch kidnaps your baby,
+          you lose a spare kid.
+        </li>
+        <li>
+          <strong>Crates:</strong> Crates block your path, so aim carefully!
+        </li>
+        <li>
+          <strong>Mom:</strong> The mom protects the baby from Grinches when
+          stationary.
+        </li>
+        <li>
+          <strong>Kid Toll:</strong> Lose all spare kids, and you'll need to beg
+          Luke for more!
+        </li>
+      </ul>
+      <p>Good luck, Mama! 🎅👶✨</p>
+      <div
+        id="game-container"
+        style="
+          width: 800px;
+          height: 400px;
+          border: 2px solid #ddd;
+          position: relative;
+          overflow: hidden;
+          background: #f0f0f0;
+        "
+      >
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+      </div>
+      <script src="/static/js/game.js"></script>
     </section>
 
     <section>
