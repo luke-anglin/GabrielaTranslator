@@ -58,6 +58,10 @@
       button:hover {
         background-color: #c9302c;
       }
+      button:disabled {
+        background-color: #aaa;
+        cursor: not-allowed;
+      }
       .output {
         margin-top: 1rem;
         padding: 1rem;
@@ -70,108 +74,89 @@
         height: auto;
         border-radius: 8px;
       }
+      .chat-message {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 8px;
+        max-width: 70%;
+      }
+      .chat-message.gabs {
+        background-color: #007bff;
+        color: white;
+        text-align: right;
+        margin-left: auto;
+      }
+      .chat-message.luke {
+        background-color: #6c757d;
+        color: white;
+        text-align: left;
+      }
     </style>
-    <script>
-      // Save the current scroll position before the page unloads
-      window.addEventListener("beforeunload", () => {
-        localStorage.setItem("scrollPosition", window.scrollY);
-      });
-
-      // Restore the scroll position when the page loads
-      window.addEventListener("load", () => {
-        const scrollPosition = localStorage.getItem("scrollPosition");
-        if (scrollPosition) {
-          window.scrollTo(0, parseInt(scrollPosition, 10));
-        }
-      });
-    </script>
   </head>
   <body>
     <header>
       <span>🎄</span>
       <h1>Christmas Themed Translator + More! 🎅</h1>
     </header>
+
+    <!-- Featured Video Section -->
     <section>
-      <!-- Featured Video -->
       <h2>🎥 Featured Video</h2>
       <video width="100%" height="auto" controls>
         <source src="path_to_your_uploaded_video.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </section>
+
+    <!-- Image Generator Section -->
     <section>
       <h2>🖼️ Generate a Christmas-Themed Romantic Image</h2>
-      <i
-        >Request some kind of image, and we'll put a romantic, Christmas-themed
-        spin on it 😉</i
-      >
-      <br />
-      <br />
-      <i
-        >Note, this may take a second! Image generation is slow! Be patient,
-        Gabs!</i
-      >
-      <form action="/generate-image" method="post">
+      <strong>Listen, I know what you're thinking. OH GOD, multiple paragraphs of text close to each other, and I can't read! Well, just try. I didn't use any big words. You should be able to get through this brief explanation, even as an illiterate illegal (which, ironically is a bit A-lliterate (like alliteration? It can be used in verb form, yes.). I impress myself, sometimes (always (and I do love nested parentheses (I'm a programmer after all! (and a good one, too!))))).</strong>
+      <p>
+        Anyways, here's how this works. Request some kind of image, and I'll put a romantic, Christmas-themed
+        spin on it 😉
+      </p>
+      <p>
+        Note, this may take a second! Image generation is slow! Be patient,
+        Gabs! And keep in mind, this won't be perfect; but neither are you,
+        after all! In fact, you are FAR from! Yet do I keep you around? I sure
+        do, and so shall you do with this image generator. So, make like me, and
+        be philanthropic. Life lessons come in the form of AI-generated bits and
+        bytes (see what I did there? Clever.)
+      </p>
+      <p>
+        For fear of violating your personal privacy, I did not seed this with
+        any pictures of humans, including you or your family or ducks or horses.
+        While that could've been cool, I doubt you want that wicked Sam Altman and his Indian friends hordeing your data like some breed of mischevious howler monkey.
+        So, it won't work if you ask for anything too personalized, but other than that, it's kinda fun. 
+      </p>
+      <p>
+        Anyways, just try it out. It's foolproof, so even you should be able to
+        operate it. 
+      </p>
+      <form id="image-generator-form" action="/generate-image" method="post">
         <input
           type="text"
           id="image_request"
           name="image_request"
-          placeholder="e.g., two dogs kissing"
+          placeholder="e.g., pancakes (you really can put anything here.)"
           required
         />
         <button type="submit">Generate Image</button>
       </form>
-      {% if image_url %}
-      <div class="output">
+      <div id="image-result" class="output" style="display: none">
         <h3>Generated Image:</h3>
-        <img src="{{ image_url }}" alt="Generated Christmas Image" />
+        <img id="generated-image" src="" alt="Generated Christmas Image" />
       </div>
-      {% endif %}
     </section>
 
-    <section>
-      <h2>🎮 Shoot the Baby onto Santa's Lap</h2>
-      <p>
-        In this hilarious game, your goal is to shoot your baby onto Santa's lap
-        while avoiding Grinches and navigating around crates! Here's how to
-        play:
-      </p>
-      <ul>
-        <li>
-          <strong>Drag and aim:</strong> Click and drag the baby to aim. Release
-          to shoot!
-        </li>
-        <li>
-          <strong>Grinches:</strong> Avoid them! If a Grinch kidnaps your baby,
-          you lose that kid for good. Luckily, you've got a few spares. But be careful! Wouldn't wanna waste 'em!
-        </li>
-        <li>
-          <strong>The void:</strong> The floor of this screen is a void. Don't let your baby fall there! You'll have to use a spare kid to replace the one ya lost!
-        </li>
-        <li>
-          <strong>Mom:</strong> You're the mom! Throw your kid carefully, lest you lose 'em!
-        </li>
-      </ul>
-      <p>Good luck, Mama! 🎅👶✨</p>
-      <div
-        id="game-container"
-        style="
-          width: 800px;
-          height: 400px;
-          border: 2px solid #ddd;
-          position: relative;
-          overflow: hidden;
-          background: #f0f0f0;
-        "
-      >
-        <canvas id="gameCanvas" width="800" height="400"></canvas>
-      </div>
-      <script src="/static/js/game.js"></script>
-    </section>
-
+    <!-- Banter with Luke Section -->
     <section>
       <h2>💬 Banter with Luke</h2>
-      <p>Have a fun conversation with Luke! Say something, and Luke will respond cleverly!</p>
+      <p>
+        Have a fun conversation with Luke! Say something, and Luke will respond
+        cleverly!
+      </p>
       <div
         id="chat-container"
         style="
@@ -183,83 +168,83 @@
           border-radius: 8px;
         "
       >
-        <!-- Chat messages will be displayed here -->
-        <div id="chat-messages" style="display: flex; flex-direction: column;"></div>
+        <div
+          id="chat-messages"
+          style="display: flex; flex-direction: column"
+        ></div>
       </div>
-      <form id="chat-form" action="/get_banter_response" method="post" style="margin-top: 1rem;">
+      <form
+        id="chat-form"
+        action="/get_banter_response"
+        method="post"
+        style="margin-top: 1rem"
+      >
         <label for="user-message">Gabs:</label>
         <input
           type="text"
           id="user-message"
           name="user_message"
           placeholder="Type your message to Luke here..."
-          style="width: calc(100% - 120px); margin-right: 8px;"
+          style="width: calc(100% - 120px); margin-right: 8px"
           required
         />
-        <button type="submit" style="width: 100px;">Send</button>
+        <button type="submit" style="width: 100px">Send</button>
       </form>
     </section>
-    
-    <script>
-      const chatForm = document.getElementById("chat-form");
-      const chatMessages = document.getElementById("chat-messages");
-      const conversationContext = []; // Array to maintain full conversation context
-    
-      // Function to append messages dynamically
-      function appendMessage(sender, message, align = "left", bgColor = "gray") {
-        const messageDiv = document.createElement("div");
-        messageDiv.style.margin = "10px 0";
-        messageDiv.style.textAlign = align;
-        messageDiv.style.backgroundColor = bgColor;
-        messageDiv.style.color = "white";
-        messageDiv.style.padding = "10px";
-        messageDiv.style.borderRadius = "8px";
-        messageDiv.style.maxWidth = "70%";
-        messageDiv.style.alignSelf = align === "right" ? "flex-end" : "flex-start";
-        messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
-    
-      chatForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-    
-        const userMessage = document.getElementById("user-message").value;
-    
-        // Append user's message (Gabs) to the chat
-        appendMessage("Gabs", userMessage, "right", "blue");
-    
-        // Add Gabs' message to the conversation context
-        conversationContext.push(`Gabs: ${userMessage}`);
-    
-        // Clear the input field
-        document.getElementById("user-message").value = "";
-    
-        // Send the full conversation context and user's message to the server
-        const response = await fetch("/get_banter_response", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            conversation: conversationContext, // Full conversation
-            user_message: userMessage, // Last user message
-          }),
-        });
-    
-        const data = await response.json();
-    
-        // Append Luke's response to the chat
-        appendMessage("Luke", data.response, "left", "gray");
-    
-        // Add Luke's response to the conversation context
-        conversationContext.push(`Luke: ${data.response}`);
-      });
-    </script>
-    
 
+    <!-- Pure Green Luke Section -->
     <section>
-      <!-- Legacy Chatbot -->
+      <h2>💬 The Pure Green Luke</h2>
+      <p></p>
+        This is what it'd be like to have a perfect, green-flags-only Luke. Ya
+        know, one who's obsessed with Disney and Christmas and Mele
+        Kaliekkiakaka or whatever in God's name it's called? Yeah, go ahead and
+        chat with him!
+      </p>
+      <div
+        id="pure-chat-container"
+        style="
+          max-height: 400px;
+          overflow-y: auto;
+          border: 1px solid #ddd;
+          padding: 1rem;
+          background: #f9f9f9;
+          border-radius: 8px;
+        "
+      >
+        <div
+          id="pure-chat-messages"
+          style="display: flex; flex-direction: column"
+        ></div>
+      </div>
+      <form
+        id="pure-chat-form"
+        action="/get_pure_luke_response"
+        method="post"
+        style="margin-top: 1rem"
+      >
+        <label for="pure-user-message">You:</label>
+        <input
+          type="text"
+          id="pure-user-message"
+          name="pure_user_message"
+          placeholder="Type your message here..."
+          style="width: calc(100% - 120px); margin-right: 8px"
+          required
+        />
+        <button type="submit" style="width: 100px">Send</button>
+      </form>
+    </section>
+
+    <!-- Legacy Translator Section -->
+    <section>
       <h2>✨ Legacy Version - Gabriela Translator ✨</h2>
-      <form action="/translate" method="post">
+      <p>
+        I gotta say, I don't know WHY you approved this thing. This thing is so
+        buggy and ugly that it must've been built by some Congolese tribesman,
+        but I'm keeping it just like it is, so have you're fun with it.
+      </p>
+      <form id="translate-form" action="/translate" method="post">
         <label for="text">Enter text for Gabriela:</label>
         <textarea
           id="text"
@@ -269,14 +254,125 @@
         ></textarea>
         <button type="submit">Translate</button>
       </form>
-      {% if translated_text %}
-      <div class="output">
+      <div id="translation-result" class="output" style="display: none">
         <h3>Original Text:</h3>
-        <p>{{ original_text }}</p>
+        <p id="original-text"></p>
         <h3>Translated Text:</h3>
-        <p>{{ translated_text }}</p>
+        <p id="translated-text"></p>
       </div>
-      {% endif %}
     </section>
+
+    <script>
+      async function handleFormSubmission(form, button, callback) {
+        button.disabled = true;
+        button.textContent = "Loading...";
+        await callback();
+        button.disabled = false;
+        button.textContent = button.dataset.originalText;
+      }
+
+      // Legacy Translator
+      const translateForm = document.getElementById("translate-form");
+      const translateButton = translateForm.querySelector("button");
+      const translationResult = document.getElementById("translation-result");
+      const originalText = document.getElementById("original-text");
+      const translatedText = document.getElementById("translated-text");
+      translateButton.dataset.originalText = translateButton.textContent;
+
+      translateForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleFormSubmission(translateForm, translateButton, async () => {
+          const text = document.getElementById("text").value;
+          const response = await fetch("/translate", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ text }),
+          });
+          const data = await response.json();
+          originalText.textContent = text;
+          translatedText.textContent = data.translated_text;
+          translationResult.style.display = "block";
+        });
+      });
+
+      // Image Generator
+      const imageGeneratorForm = document.getElementById(
+        "image-generator-form"
+      );
+      const imageButton = imageGeneratorForm.querySelector("button");
+      const generatedImage = document.getElementById("generated-image");
+      const imageResult = document.getElementById("image-result");
+      imageButton.dataset.originalText = imageButton.textContent;
+
+      imageGeneratorForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleFormSubmission(imageGeneratorForm, imageButton, async () => {
+          const imageRequest = document.getElementById("image_request").value;
+          const response = await fetch("/generate-image", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ image_request: imageRequest }),
+          });
+          const data = await response.json();
+          generatedImage.src = data.image_url;
+          imageResult.style.display = "block";
+        });
+      });
+
+      // Banter with Luke
+      const chatForm = document.getElementById("chat-form");
+      const chatButton = chatForm.querySelector("button");
+      const chatMessages = document.getElementById("chat-messages");
+      const conversationContext = [];
+      chatButton.dataset.originalText = chatButton.textContent;
+
+      chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleFormSubmission(chatForm, chatButton, async () => {
+          const userMessage = document.getElementById("user-message").value;
+          conversationContext.push(`Gabs: ${userMessage}`);
+          const response = await fetch("/get_banter_response", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              conversation: conversationContext,
+              user_message: userMessage,
+            }),
+          });
+          const data = await response.json();
+          chatMessages.innerHTML += `<div class="chat-message gabs">Gabs: ${userMessage}</div>`;
+          chatMessages.innerHTML += `<div class="chat-message luke">Luke: ${data.response}</div>`;
+          conversationContext.push(`Luke: ${data.response}`);
+        });
+      });
+
+      // The Pure Green Luke
+      const pureChatForm = document.getElementById("pure-chat-form");
+      const pureChatButton = pureChatForm.querySelector("button");
+      const pureChatMessages = document.getElementById("pure-chat-messages");
+      const pureConversationContext = [];
+      pureChatButton.dataset.originalText = pureChatButton.textContent;
+
+      pureChatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleFormSubmission(pureChatForm, pureChatButton, async () => {
+          const userMessage =
+            document.getElementById("pure-user-message").value;
+          pureConversationContext.push(`You: ${userMessage}`);
+          const response = await fetch("/get_pure_luke_response", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              conversation: pureConversationContext,
+              user_message: userMessage,
+            }),
+          });
+          const data = await response.json();
+          pureChatMessages.innerHTML += `<div class="chat-message gabs">You: ${userMessage}</div>`;
+          pureChatMessages.innerHTML += `<div class="chat-message luke">Luke: ${data.response}</div>`;
+          pureConversationContext.push(`Luke: ${data.response}`);
+        });
+      });
+    </script>
   </body>
 </html>
