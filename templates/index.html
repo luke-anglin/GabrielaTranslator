@@ -3,78 +3,144 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Translator</title>
+    <title>Christmas Update</title>
     <style>
       body {
         font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+        background-color: #f8f9fa;
         margin: 0;
         padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
       }
-      .container {
-        background-color: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 400px;
-      }
-      h1 {
-        font-size: 24px;
-        color: #333;
-        text-align: center;
-      }
-      textarea {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        box-sizing: border-box;
-      }
-      input[type="submit"] {
-        width: 100%;
-        background-color: #4caf50;
+      header {
+        background-color: #d9534f;
         color: white;
-        padding: 10px;
+        padding: 1rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+      section {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 1rem;
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+      h2 {
+        color: #d9534f;
+      }
+      form {
+        margin-bottom: 2rem;
+      }
+      textarea,
+      input[type="text"] {
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      button {
+        background-color: #d9534f;
+        color: white;
         border: none;
-        border-radius: 5px;
-        font-size: 16px;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
         cursor: pointer;
       }
-      input[type="submit"]:hover {
-        background-color: #45a049;
+      button:hover {
+        background-color: #c9302c;
       }
-      .translated-text {
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #e7f3e7;
-        border: 1px solid #c8e6c9;
-        border-radius: 5px;
-        font-size: 16px;
-        color: #333;
+      .output {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #f1f1f1;
+        border-left: 4px solid #d9534f;
+        border-radius: 4px;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
       }
     </style>
+    <script>
+      // Save the current scroll position before the page unloads
+      window.addEventListener("beforeunload", () => {
+        localStorage.setItem("scrollPosition", window.scrollY);
+      });
+
+      // Restore the scroll position when the page loads
+      window.addEventListener("load", () => {
+        const scrollPosition = localStorage.getItem("scrollPosition");
+        if (scrollPosition) {
+          window.scrollTo(0, parseInt(scrollPosition, 10));
+        }
+      });
+    </script>
   </head>
   <body>
-    <div class="container">
-      <h1>Gabriela Translator</h1>
-      <form action="/translate" method="POST">
-        <textarea name="text" rows="5" placeholder="Enter text to translate...">
-{{ original_text }}</textarea
-        ><br />
-        <input type="submit" value="Translate" />
+    <header>
+      <span>🎄</span>
+      <h1>Christmas Themed Translator + More! 🎅</h1>
+    </header>
+    <section>
+      <!-- Featured Video -->
+      <h2>🎥 Featured Video</h2>
+      <video width="100%" height="auto" controls>
+        <source src="path_to_your_uploaded_video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </section>
+    <section>
+      <h2>🖼️ Generate a Christmas-Themed Romantic Image</h2>
+      <i>Request some kind of image, and we'll put a romantic, Christmas-themed spin on it 😉</i>
+      <form action="/generate-image" method="post">
+        <input
+          type="text"
+          id="image_request"
+          name="image_request"
+          placeholder="e.g., two dogs kissing"
+          required
+        />
+        <button type="submit">Generate Image</button>
+      </form>
+      {% if image_url %}
+      <div class="output">
+        <h3>Generated Image:</h3>
+        <img src="{{ image_url }}" alt="Generated Christmas Image" />
+      </div>
+      {% endif %}
+    </section>
+
+    <section>
+      <!-- Legacy Chatbot -->
+      <h2>✨ Legacy Version - Gabriela's Chatbot ✨</h2>
+      <form action="/translate" method="post">
+        <label for="text">Enter text for Gabriela:</label>
+        <textarea
+          id="text"
+          name="text"
+          rows="5"
+          placeholder="Enter text here..."
+        ></textarea>
+        <button type="submit">Translate</button>
       </form>
       {% if translated_text %}
-      <div class="translated-text">
-        <h2>Translated Text:</h2>
+      <div class="output">
+        <h3>Original Text:</h3>
+        <p>{{ original_text }}</p>
+        <h3>Translated Text:</h3>
         <p>{{ translated_text }}</p>
       </div>
       {% endif %}
-    </div>
+    </section>
   </body>
 </html>
