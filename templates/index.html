@@ -11,6 +11,7 @@
         margin: 0;
         padding: 0;
       }
+      
       header {
         background-color: #d9534f;
         color: white;
@@ -236,6 +237,42 @@
       </form>
     </section>
 
+    <!-- Baby Shooting Game Section -->
+    <section>
+      <h2>🎮 Shoot the Baby onto Santa's Lap</h2>
+      <p>
+        In this hilarious game, your goal is to shoot your baby onto Santa's lap
+        while avoiding Grinches and navigating the void! Here's how to play:
+      </p>
+      <ul>
+        <li><strong>Drag and aim:</strong> Click and drag the baby to aim. Release to shoot!</li>
+        <li><strong>Grinches:</strong> Avoid them! If a Grinch kidnaps your baby, you lose that kid for good.</li>
+        <li><strong>The void:</strong> The floor of this screen is a void. Don't let your baby fall there!</li>
+        <li><strong>Mom:</strong> You're the mom! Throw your kid carefully, lest you lose 'em! You have a few spares, but don't run out; otherwise, you'll have to enter a very special message!</li>
+        <li><strong>Goal:</strong> If you can land the baby in Santa's lap 15 times without going through all your spare kids, send Luke a screenshot of your score for a prize.</li>
+      </ul>
+      <p>Good luck, Mama! 🎅👶✨</p>
+      <div
+        id="game-container"
+        style="
+          width: 800px;
+          height: 400px;
+          border: 2px solid #ddd;
+          position: relative;
+          overflow: hidden;
+          background: #f0f0f0;
+        "
+      >
+        <canvas id="gameCanvas" width="800" height="400"></canvas>
+        <div id="fullscreen-gif" style="display: none;"></div>
+
+      </div>
+      <script src="/static/js/game.js"></script>
+    </section>
+
+
+
+    
     <!-- Legacy Translator Section -->
     <section>
       <h2>✨ Legacy Version - Gabriela Translator ✨</h2>
