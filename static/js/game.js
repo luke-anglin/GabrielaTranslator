@@ -2,17 +2,20 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 // Game variables
-let baby = { x: 150, y: 200, radius: 20, dx: 0, dy: 0, isMoving: false };
-let mom = { x: 100, y: 200, width: 60, height: 80 };
+let momSpawnX = 50; // Mom's bottom-left corner position
+let momSpawnY = canvas.height - 150; // Mom's height near bottom
+let baby = { x: momSpawnX + 80, y: momSpawnY + 30, radius: 20, dx: 0, dy: 0, isMoving: false };
+let mom = { x: momSpawnX, y: momSpawnY, width: 60, height: 80 };
 let santa = { x: 600, y: 250, width: 80, height: 100 };
 let grinches = [];
-let gravity = 0.2;
+let gravity = 0.1; // Reduced gravity for smoother arcs
 let isDragging = false;
 let dragLine = { x: 0, y: 0 };
 
 // Spare Kids Logic
 let spareKids = 3;
 let successfulThrows = 0;
+
 
 // Baby sprite management
 const babySprites = [
@@ -41,11 +44,11 @@ const praiseMessages = [
   "Luke's brilliance and charm outshine the stars.",
   "I cannot believe how lucky I am to know Luke.",
 ];
-
-// Initialize Grinches
+// Initialize Grinches dynamically based on successfulThrows
 function initializeGrinches() {
   grinches = [];
-  for (let i = 0; i < 4; i++) {
+  const numGrinches = successfulThrows + 1; // Start with 1 Grinch, add one per success
+  for (let i = 0; i < numGrinches; i++) {
     grinches.push({
       x: Math.random() * (canvas.width - 50),
       y: Math.random() * (canvas.height - 100),
@@ -56,8 +59,6 @@ function initializeGrinches() {
     });
   }
 }
-
-// Draw the game
 function drawGame() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -75,12 +76,10 @@ function drawGame() {
     );
   }
 
-  // Draw Mom
-  mom.x = baby.x - 60;
-  mom.y = baby.y - 40;
-  ctx.drawImage(momSprite, mom.x, mom.y, mom.width, mom.height);
+  // Draw Mom (fixed in the bottom-left corner)
+  ctx.drawImage(momSprite, momSpawnX, momSpawnY, mom.width, mom.height);
 
-  // Draw Baby
+  // Draw Baby (next to mom)
   ctx.drawImage(
     babySprite,
     baby.x - baby.radius,
@@ -89,16 +88,33 @@ function drawGame() {
     baby.radius * 2
   );
 
-  // Draw trajectory line
+  // Draw trajectory line (Angry Birds style)
   if (isDragging) {
+    const dragDistanceX = dragLine.x - baby.x;
+    const dragDistanceY = dragLine.y - baby.y;
+
+    // Calculate curve points for the trajectory
+    const steps = 15; // Number of dots
+    const gravityPreview = 0.1; // Use a smaller gravity to simulate the arc
+    let tempX = baby.x;
+    let tempY = baby.y;
+    let tempDx = dragDistanceX * 0.03;
+    let tempDy = dragDistanceY * 0.03;
+
+    ctx.strokeStyle = "red";
+    ctx.setLineDash([5, 5]); // Dashed line for trajectory
     ctx.beginPath();
     ctx.moveTo(baby.x, baby.y);
-    const lineEndX = baby.x + (dragLine.x - baby.x) * 0.6;
-    const lineEndY = baby.y + (dragLine.y - baby.y) * 0.6;
-    ctx.lineTo(lineEndX, lineEndY);
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
+
+    for (let i = 0; i < steps; i++) {
+      tempX += tempDx;
+      tempY += tempDy;
+      tempDy += gravityPreview;
+      ctx.lineTo(tempX, tempY);
+    }
+
     ctx.stroke();
+    ctx.setLineDash([]); // Reset line style
   }
 
   // Display scoreboard
@@ -108,8 +124,14 @@ function drawGame() {
   ctx.fillText(`Times on Santa's Lap: ${successfulThrows}`, 10, 40);
 }
 
+
 // Helper function for collision detection
 function checkCollision(circle, rect) {
+  // Skip collision check for mom
+  if (rect === mom) {
+    return false;
+  }
+
   const distX = Math.abs(circle.x - (rect.x + rect.width / 2));
   const distY = Math.abs(circle.y - (rect.y + rect.height / 2));
 
@@ -192,21 +214,26 @@ function handleGrinchHit() {
     showLossScreen();
   }
 }
-
-// Reset Baby
 function resetBaby() {
-  baby.x = 150;
-  baby.y = 200;
+  baby.x = momSpawnX + 80; // Baby starts to the right of mom
+  baby.y = momSpawnY + 30;
   baby.dx = 0;
   baby.dy = 0;
   baby.isMoving = false;
 }
 
+
+
 // Reset Level
 function resetLevel() {
   resetBaby();
-  santa.x = Math.random() * (canvas.width - santa.width);
-  santa.y = Math.random() * (canvas.height - santa.height);
+  // Ensure Santa spawns at least 200px away from the baby
+  do {
+    santa.x = Math.random() * (canvas.width - santa.width);
+    santa.y = Math.random() * (canvas.height - santa.height);
+  } while (
+    Math.hypot(santa.x - baby.x, santa.y - baby.y) < 200 // 200px minimum distance
+  );
   initializeGrinches();
 }
 
@@ -262,7 +289,7 @@ function showFullScreenGIF(callback) {
     gifContainer.innerHTML = ""; // Clear the GIF content
     console.log("Hiding GIF and calling the callback...");
     callback();
-  }, 8000);
+  }, 6000);
 }
 
 // Reset Game
@@ -275,8 +302,8 @@ function resetGame() {
 // Update Grinches
 function updateGrinches() {
   for (const grinch of grinches) {
-    grinch.x += grinch.dx;
-    grinch.y += grinch.dy;
+    grinch.x += grinch.dx * 0.5; // Move at half speed
+    grinch.y += grinch.dy * 0.5;
 
     if (grinch.x < 0 || grinch.x + grinch.width > canvas.width) {
       grinch.dx *= -1;
@@ -286,6 +313,7 @@ function updateGrinches() {
     }
   }
 }
+
 
 // Mouse Events
 canvas.addEventListener("mousedown", (e) => {
@@ -313,12 +341,23 @@ canvas.addEventListener("mouseup", (e) => {
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    baby.dx = (dragLine.x - baby.x) * 0.02;
-    baby.dy = (dragLine.y - baby.y) * 0.02;
+
+    // Calculate drag distance
+    const dragDistanceX = dragLine.x - baby.x;
+    const dragDistanceY = dragLine.y - baby.y;
+
+    // Scale the baby's velocity for a smooth throw
+    const scalingFactor = 0.03; // Adjust for responsiveness
+    baby.dx = dragDistanceX * scalingFactor;
+    baby.dy = dragDistanceY * scalingFactor;
+
+    // Start baby's movement
     baby.isMoving = true;
     isDragging = false;
   }
 });
+
+
 
 // Game Loop
 function gameLoop() {

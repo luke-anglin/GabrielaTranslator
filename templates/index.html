@@ -104,7 +104,7 @@
     <section>
       <h2>🎥 Featured Video</h2>
       <video width="100%" height="auto" controls>
-        <source src="path_to_your_uploaded_video.mp4" type="video/mp4" />
+        <source src="/static/featured_vid.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </section>
@@ -224,7 +224,7 @@
         method="post"
         style="margin-top: 1rem"
       >
-        <label for="pure-user-message">You:</label>
+        <label for="pure-user-message">Gabs:</label>
         <input
           type="text"
           id="pure-user-message"
@@ -395,7 +395,7 @@
         handleFormSubmission(pureChatForm, pureChatButton, async () => {
           const userMessage =
             document.getElementById("pure-user-message").value;
-          pureConversationContext.push(`You: ${userMessage}`);
+          pureConversationContext.push(`Gabs: ${userMessage}`);
           const response = await fetch("/get_pure_luke_response", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -405,7 +405,7 @@
             }),
           });
           const data = await response.json();
-          pureChatMessages.innerHTML += `<div class="chat-message gabs">You: ${userMessage}</div>`;
+          pureChatMessages.innerHTML += `<div class="chat-message gabs">Gabs: ${userMessage}</div>`;
           pureChatMessages.innerHTML += `<div class="chat-message luke">Luke: ${data.response}</div>`;
           pureConversationContext.push(`Luke: ${data.response}`);
         });
