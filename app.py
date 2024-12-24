@@ -85,13 +85,15 @@ def generate_image():
     client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
     
     # Generate the image
-    response = client.images.generate(prompt=f"The user wants an image generated. They requested this: {user_request}.\nPut a Christmasy and romantic spin on this and follow their instruction too.")
+    response = client.images.generate(prompt=f"The user wants an image generated. They requested this: {user_request}.\nPut a Christmasy and romantic spin on this and follow their instruction too. It is the Christmas season and the picture should be twisted to reflect that.")
     
     # Extract the URL of the generated image
     image_url = response.data[0].url
     
     # Return JSON response with the image URL
     return jsonify({"image_url": image_url})
+
+
 
 
 
